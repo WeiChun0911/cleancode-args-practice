@@ -246,8 +246,8 @@ public class Args {
     private class ArgsException extends Exception {
     }
 
-    private class ArgumentMarshaler {
-        private boolean booleanValue = false;
+    private abstract class ArgumentMarshaler {
+        protected boolean booleanValue = false;
         private String stringValue;
         private int integerValue;
 
@@ -274,6 +274,8 @@ public class Args {
         public int getInteger() {
             return integerValue;
         }
+
+        public abstract void set(String s);
     }
 
     private class BooleanArgumentMarshaler extends ArgumentMarshaler {
