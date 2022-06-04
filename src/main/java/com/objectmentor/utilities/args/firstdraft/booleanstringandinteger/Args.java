@@ -232,9 +232,8 @@ public class Args {
 
     public boolean getBoolean(char arg) {
         Args.ArgumentMarshaler am = booleanArgs.get(arg);
-        return am != null && am.getBoolean();
+        return am != null && (Boolean) am.get();
     }
-
     public boolean has(char arg) {
         return argsFound.contains(arg);
     }
@@ -276,6 +275,10 @@ public class Args {
         }
 
         public abstract void set(String s);
+
+        public Object get() {
+            return null;
+        }
     }
 
     private class BooleanArgumentMarshaler extends ArgumentMarshaler {
