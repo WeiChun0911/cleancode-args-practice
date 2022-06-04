@@ -249,10 +249,6 @@ public class Args {
         private String stringValue;
         private int integerValue;
 
-        public void setBoolean(boolean value) {
-            booleanValue = value;
-        }
-
         public void setString(String s) {
             stringValue = s;
         }
