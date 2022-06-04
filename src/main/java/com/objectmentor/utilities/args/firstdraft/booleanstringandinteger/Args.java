@@ -220,10 +220,6 @@ public class Args {
         return message.toString();
     }
 
-    private boolean falseIfNull(Boolean b) {
-        return b != null && b;
-    }
-
     private int zeroIfNull(Integer i) {
         return i == null ? 0 : i;
     }
@@ -241,7 +237,7 @@ public class Args {
     }
 
     public boolean getBoolean(char arg) {
-        return falseIfNull(booleanArgs.get(arg).getBoolean());
+        return booleanArgs.get(arg).getBoolean();
     }
 
     public boolean has(char arg) {
