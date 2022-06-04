@@ -279,6 +279,9 @@ public class Args {
     }
 
     private class BooleanArgumentMarshaler extends ArgumentMarshaler {
+        public void set(String s) {
+            booleanValue = true;
+        }
     }
 
     private class StringArgumentMarshaler extends ArgumentMarshaler {
