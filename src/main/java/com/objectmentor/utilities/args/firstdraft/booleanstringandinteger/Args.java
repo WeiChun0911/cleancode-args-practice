@@ -276,14 +276,16 @@ public class Args {
 
         public abstract void set(String s);
 
-        public Object get() {
-            return null;
-        }
+        public abstract Object get();
     }
 
     private class BooleanArgumentMarshaler extends ArgumentMarshaler {
         public void set(String s) {
             booleanValue = true;
+        }
+
+        public Object get() {
+            return booleanValue;
         }
     }
 
