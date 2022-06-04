@@ -238,7 +238,7 @@ public class Args {
 
     public boolean getBoolean(char arg) {
         Args.ArgumentMarshaler am = booleanArgs.get(arg);
-        return am.getBoolean();
+        return am != null && am.getBoolean();
     }
 
     public boolean has(char arg) {
