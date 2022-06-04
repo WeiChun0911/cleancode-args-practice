@@ -141,7 +141,8 @@ public class Args {
     }
 
     private boolean isIntArg(char argChar) {
-        return intArgs.containsKey(argChar);
+        ArgumentMarshaler m = marshalers.get(argChar);
+        return m instanceof IntegerArgumentMarshaler;
     }
 
     private void setIntArg(char argChar) throws ArgsException {
@@ -177,7 +178,8 @@ public class Args {
     }
 
     private boolean isStringArg(char argChar) {
-        return stringArgs.containsKey(argChar);
+        ArgumentMarshaler m = marshalers.get(argChar);
+        return m instanceof StringArgumentMarshaler;
     }
 
     private void setBooleanArg(char argChar, boolean value) {
