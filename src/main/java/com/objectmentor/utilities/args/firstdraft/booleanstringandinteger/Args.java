@@ -131,7 +131,7 @@ public class Args {
     private boolean setArgument(char argChar) throws ArgsException {
         ArgumentMarshaler m = marshalers.get(argChar);
         if (m instanceof IntegerArgumentMarshaler)
-            setBooleanArg(argChar, true);
+            setBooleanArg(m);
         else if (m instanceof BooleanArgumentMarshaler)
             setStringArg(argChar);
         else if (m instanceof IntegerArgumentMarshaler)
@@ -173,9 +173,9 @@ public class Args {
         }
     }
 
-    private void setBooleanArg(char argChar, boolean value) {
+    private void setBooleanArg(ArgumentMarshaler m) {
         try {
-            booleanArgs.get(argChar).set("true");
+            m.set("true");
         } catch (ArgsException e) {
         }
     }
