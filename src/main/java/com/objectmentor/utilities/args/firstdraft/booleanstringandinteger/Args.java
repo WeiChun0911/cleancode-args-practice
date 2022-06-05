@@ -76,13 +76,11 @@ public class Args {
 
     private void parseIntegerSchemaElement(char elementId) {
         ArgumentMarshaler m = new IntegerArgumentMarshaler();
-        intArgs.put(elementId, m);
         marshalers.put(elementId, m);
     }
 
     private void parseStringSchemaElement(char elementId) {
         ArgumentMarshaler m = new StringArgumentMarshaler();
-        stringArgs.put(elementId, m);
         marshalers.put(elementId, m);
     }
 
@@ -219,13 +217,21 @@ public class Args {
     }
 
     public String getString(char arg) {
-        Args.ArgumentMarshaler am = stringArgs.get(arg);
-        return am == null ? "" : (String) am.get();
+        Args.ArgumentMarshaler am = marshalers.get(arg);
+        try {
+            return am == null ? "" : (String) am.get();
+        } catch (ClassCastException e) {
+            return "";
+        }
     }
 
     public int getInt(char arg) {
-        Args.ArgumentMarshaler am = intArgs.get(arg);
-        return am == null ? 0 : (Integer) am.get();
+        Args.ArgumentMarshaler am = marshalers.get(arg);
+        try {
+            return am == null ? 0 : (Integer) am.get();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public boolean getBoolean(char arg) {
