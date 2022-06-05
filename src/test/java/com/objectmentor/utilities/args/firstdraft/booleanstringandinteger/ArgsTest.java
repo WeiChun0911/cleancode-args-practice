@@ -8,6 +8,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ArgsTest {
@@ -228,4 +229,14 @@ public class ArgsTest {
         assertEquals(42.3, args.getDouble('x'), .001);
     }
 
+    @Test
+    public void testInvalidDouble() throws Exception {
+        Args args = new Args("x##", new String[] { "-x", "Forty two" });
+        assertFalse(args.isValid());
+        assertEquals(0, args.cardinality());
+        assertFalse(args.has('x'));
+        assertEquals(0, args.getInt('x'));
+        assertEquals("Argument -x expects a double but was 'Forty two'.",
+                args.errorMessage());
+    }
 }
