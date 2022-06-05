@@ -136,6 +136,11 @@ public class Args {
             case MISSING_INTEGER:
                 return String.format("Could not find integer parameter for -%c.",
                     errorArgumentId);
+            case INVALID_DOUBLE:
+                return String.format("Argument -%c expects a double but was '%s'.",
+                        errorArgumentId, errorParameter);
+            case MISSING_DOUBLE:
+                return String.format("Could not find double parameter for -%c.", errorArgumentId);
         }
         return "";
     }
