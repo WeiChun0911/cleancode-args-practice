@@ -1,229 +1,131 @@
 package com.objectmentor.utilities.args.firstdraft.booleanstringandinteger;
 
+import com.objectmentor.utilities.args.ArgsException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
-import java.text.ParseException;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class ArgsTest {
-
     @Test
-    public void checkThatIntegerIsEnabledAndCorrespondingArgumentIsPassed() throws ParseException {
-        Args arg = new Args("p#", new String[]{"-p", "8080"});
-        int port = arg.getInt('p');
-        assertThat("Integer argument", port, is(8080));
+    public void testCreateWithNoSchemaOrArguments() throws Exception {
+        Args args = new Args("", new String[0]);
+        assertEquals(0, args.cardinality());
     }
 
     @Test
-    public void checkThatOneLoggingFlagIsEnabled() throws ParseException {
-        Args arg = new Args("l", new String[]{"-l"});
-        boolean logging = arg.getBoolean('l');
-        assertThat("Logging", logging, is(true));
-    }
-
-    @Test
-    public void checkThatOneLoggingFlagThoughItContainsBlanksIsEnabled() throws ParseException {
-        Args arg = new Args("  l     ", new String[]{"-l"});
-        boolean logging = arg.getBoolean('l');
-        assertThat("Logging", logging, is(true));
-    }
-
-    @Test
-    public void checkThatTwoLoggingFlagsAreEnabled() throws ParseException {
-        Args arg = new Args("l,X", new String[]{"-l", "-X"});
-        boolean loggingFlag1 = arg.getBoolean('l');
-        boolean loggingFlag2 = arg.getBoolean('X');
-        assertThat("First logging flag", loggingFlag1, is(true));
-        assertThat("Second logging flag", loggingFlag2, is(true));
-    }
-
-    @Test
-    public void onlyOneOfTwoLoggingFlagsAreEnabled() throws ParseException {
-        Args arg = new Args("l,X", new String[]{"-X"});
-        boolean loggingFlag1 = arg.getBoolean('l');
-        boolean loggingFlag2 = arg.getBoolean('X');
-        assertThat("First logging flag", loggingFlag1, is(false));
-        assertThat("Second logging flag", loggingFlag2, is(true));
-    }
-
-    @Test
-    public void checkThatOneStringFlagIsEnabledAndCorrespondingArgumentIsPassed() throws ParseException {
-        Args arg = new Args("d*", new String[]{"-d", "C:/Temp"});
-        String stringArgument = arg.getString('d');
-        assertThat("String argument", stringArgument, is(equalTo("C:/Temp")));
-    }
-
-    @Test
-    public void loggingAndStringFlagsEnabledAndBothAreUsed() throws ParseException {
-        Args arg = new Args("f*,l", new String[]{"-l", "-f", "C:/Temp/hello.txt"});
-        boolean logging = arg.getBoolean('l');
-        String stringArgument = arg.getString('f');
-        assertThat("Logging", logging, is(true));
-        assertThat("String argument", stringArgument, is(equalTo("C:/Temp/hello.txt")));
-    }
-
-    @Test
-    public void checkThatArgsHasFoundLoggingArgument() throws ParseException {
-        Args arg = new Args("l", new String[]{"-l"});
-        boolean hasLogging = arg.has('l');
-        assertThat("Logging was found", hasLogging, is(true));
-    }
-
-    @Test
-    public void ifNothingIsPassedArgsIsValid() throws ParseException {
-        Args arg = new Args("", new String[]{});
-        boolean isValid = arg.isValid();
-        assertThat("Arg must be valid", isValid, is(true));
-    }
-
-    @Test(expected = ParseException.class)
-    public void ifSchemaContainsInvalidCharactersThrowParseException() throws ParseException {
-        new Args("bx", null);
-    }
-
-    @Test
-    public void ifSchemaContainsInvalidCharactersCheckErrorMessageOfThrownParseException() throws ParseException {
+    public void testWithNoSchemaButWithOneArgument() throws Exception {
         try {
-            new Args("bx", null);
-        } catch (ParseException e) {
-            String errorMessage = e.getMessage();
-            assertThat("Error message", errorMessage, is(equalTo("Argument: b has invalid format: x.")));
+            new Args("", new String[] { "-x" });
+            fail();
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT, e.getErrorCode());
+            assertEquals('x', e.getErrorArgumentId());
         }
     }
 
     @Test
-    public void invalidArgumentIsPassedForBoolean() throws ParseException {
-        Args arg = new Args("l", new String[]{"-p"});
-        boolean isValid = arg.isValid();
-        assertThat("Arg must be invalid", isValid, is(false));
-    }
-
-    @Test
-    public void checkErrorMessageForMissingArgumentOfStringSchema() throws Exception {
-        Args arg = new Args("d*", new String[]{"-d"});
-        String errorMessage = arg.errorMessage();
-        assertThat("Error message", errorMessage, is(equalTo("Could not find string parameter for -d.")));
-    }
-
-    @Test
-    public void checkErrorMessageForMissingArgumentOfIntegerSchema() throws Exception {
-        Args arg = new Args("p#", new String[]{"-p"});
-        String errorMessage = arg.errorMessage();
-        assertThat("Error message", errorMessage, is(equalTo("Could not find integer parameter for -p.")));
-    }
-
-    @Test
-    public void checkErrorMessageForInvalidArgumentOfIntegerSchema() throws Exception {
-        Args arg = new Args("p#", new String[]{"-p", "Foo"});
-        String errorMessage = arg.errorMessage();
-        assertThat("Error message", errorMessage, is(equalTo("Argument -p expects an integer but was 'Foo'.")));
-    }
-
-    @Test
-    public void ifArgumentIsMissingForStringSchemaArgsMustBeInvalid() throws Exception {
-        Args arg = new Args("d*", new String[]{"-d"});
-        boolean isValid = arg.isValid();
-        assertThat("com.objectmentor.utilities.args.seconddraft.com.objectmentor.utilities.args.seconddraft.Args must be invalid", isValid, is(false));
-    }
-
-    @Test
-    public void ifArgumentIsMissingForIntegerSchemaArgsMustBeInvalid() throws Exception {
-        Args arg = new Args("p#", new String[]{"-p"});
-        boolean isValid = arg.isValid();
-        assertThat("com.objectmentor.utilities.args.seconddraft.com.objectmentor.utilities.args.seconddraft.Args must be invalid", isValid, is(false));
-    }
-
-    @Test
-    public void ifArgumentIsMissingForStringSchemaABlankMustBeReturned() throws Exception {
-        Args arg = new Args("d*", new String[]{"-d"});
-        String stringArgument = arg.getString('d');
-        assertThat("String argument", stringArgument, is(equalTo("")));
-    }
-
-    @Test
-    public void ifArgumentIsMissingForIntegerSchemaZeroMustBeReturned() throws Exception {
-        Args arg = new Args("p#", new String[]{"-p"});
-        int intArgument = arg.getInt('p');
-        assertThat("Integer argument", intArgument, is(0));
-    }
-
-    @Test
-    public void checkErrorMessageForWrongArgument() throws Exception {
-        Args arg = new Args("l", new String[]{"-p"});
-        String errorMessage = arg.errorMessage();
-        assertThat("Error message", errorMessage, is(equalTo("Argument(s) -p unexpected.")));
-    }
-
-    @Test(expected = Exception.class)
-    public void printEmptyErrorMessageForValidArgument() throws Exception {
-        Args arg = new Args("l", new String[]{"-l"});
-        String errorMessage = arg.errorMessage();
-        assertThat("Error message", errorMessage, is(equalTo("")));
-    }
-
-    @Test
-    public void printUsageForLoggingFlag() throws ParseException {
-        Args arg = new Args("l", new String[]{"-l"});
-        String usage = arg.usage();
-        assertThat("Usage", usage, is(equalTo("-[l]")));
-    }
-
-    @Test
-    public void cardinalityForOneValidBooleanArgumentMustBeOne() throws ParseException {
-        Args arg = new Args("l", new String[]{"-l"});
-        int cardinality = arg.cardinality();
-        assertThat("Cardinality", cardinality, is(1));
-    }
-
-    @Test
-    public void printEmptyUsageIfNoArgumentsArePassed() throws ParseException {
-        Args arg = new Args("", new String[]{});
-        String usage = arg.usage();
-        assertThat("Usage", usage, is(equalTo("")));
-    }
-
-    @Test
-    public void loggingFlagMustNotBeFollowedByArgument() throws ParseException {
-        Args arg = new Args("l", new String[]{"-l", "p"});
-        boolean isValid = arg.isValid();
-        assertThat("Arg must be invalid", isValid, is(false));
-    }
-
-    @Test(expected = ParseException.class)
-    public void ifSchemaElementIdIsNotACharacterThrowParseException() throws ParseException {
-        Args arg = new Args("1", null);
-    }
-
-    @Test
-    public void checkErrorMessageForNoneCharacterSchemaElementId() throws ParseException {
+    public void testWithNoSchemaButWithMultipleArguments() throws Exception {
         try {
-            Args arg = new Args("1", null);
-        } catch (ParseException e) {
-            String errorMessage = e.getMessage();
-            assertThat("Error message", errorMessage, is(equalTo("Bad character:1in com.objectmentor.utilities.args.seconddraft.com.objectmentor.utilities.args.seconddraft.Args format: 1")));
+            new Args("", new String[] { "-x", "-y" });
+            fail();
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT, e.getErrorCode());
+            assertEquals('x', e.getErrorArgumentId());
         }
     }
 
     @Test
-    public void errorMessageOnlyContainsInvalidCharacter() throws ParseException {
+    public void testNonLetterSchema() throws Exception {
         try {
-            Args arg = new Args("g,d*,2", null);
-        } catch (ParseException e) {
-            String errorMessage = e.getMessage();
-            assertThat("Error message", errorMessage, is(equalTo("Bad character:2in com.objectmentor.utilities.args.seconddraft.com.objectmentor.utilities.args.seconddraft.Args format: g,d*,2")));
+            new Args("*", new String[] {});
+            fail("Args constructor should have thrown exception");
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.INVALID_ARGUMENT_NAME, e.getErrorCode());
+            assertEquals('*', e.getErrorArgumentId());
+        }
+    }
+
+    @Test
+    public void testInvalidArgumentFormat() throws Exception {
+        try {
+            new Args("f~", new String[] {});
+            fail("Args constructor should have throws exception");
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.INVALID_FORMAT, e.getErrorCode());
+            assertEquals('f', e.getErrorArgumentId());
+        }
+    }
+
+    @Test
+    public void testSimpleBooleanPresent() throws Exception {
+        Args args = new Args("x", new String[] { "-x" });
+        assertEquals(1, args.cardinality());
+        assertEquals(true, args.getBoolean('x'));
+    }
+
+    @Test
+    public void testSimpleStringPresent() throws Exception {
+        Args args = new Args("x*", new String[] { "-x", "param" });
+        assertEquals(1, args.cardinality());
+        assertTrue(args.has('x'));
+        assertEquals("param", args.getString('x'));
+    }
+
+    @Test
+    public void testMissingStringArgument() throws Exception {
+        try {
+            new Args("x*", new String[] { "-x" });
+            fail();
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.MISSING_STRING, e.getErrorCode());
+            assertEquals('x', e.getErrorArgumentId());
+        }
+    }
+
+    @Test
+    public void testSpacesInFormat() throws Exception {
+        Args args = new Args("x, y", new String[] { "-xy" });
+        assertEquals(2, args.cardinality());
+        assertTrue(args.has('x'));
+        assertTrue(args.has('y'));
+    }
+
+    @Test
+    public void testSimpleIntPresent() throws Exception {
+        Args args = new Args("x#", new String[] { "-x", "42" });
+        assertEquals(1, args.cardinality());
+        assertTrue(args.has('x'));
+        assertEquals(42, args.getInt('x'));
+    }
+
+    @Test
+    public void testInvalidInteger() throws Exception {
+        try {
+            new Args("x#", new String[] { "-x", "Forty two" });
+            fail();
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.INVALID_INTEGER, e.getErrorCode());
+            assertEquals('x', e.getErrorArgumentId());
+            assertEquals("Forty two", e.getErrorParameter());
+        }
+    }
+
+    public void testMissingInteger() throws Exception {
+        try {
+            new Args("x#", new String[] { "-x" });
+            fail();
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.MISSING_INTEGER, e.getErrorCode());
+            assertEquals('x', e.getErrorArgumentId());
         }
     }
 
     @Test
     public void testSimpleDoublePresent() throws Exception {
         Args args = new Args("x##", new String[] { "-x", "42.3" });
-        assertTrue(args.isValid());
         assertEquals(1, args.cardinality());
         assertTrue(args.has('x'));
         assertEquals(42.3, args.getDouble('x'), .001);
@@ -231,23 +133,24 @@ public class ArgsTest {
 
     @Test
     public void testInvalidDouble() throws Exception {
-        Args args = new Args("x##", new String[] { "-x", "Forty two" });
-        assertFalse(args.isValid());
-        assertEquals(0, args.cardinality());
-        assertFalse(args.has('x'));
-        assertEquals(0, args.getInt('x'));
-        assertEquals("Argument -x expects a double but was 'Forty two'.",
-                args.errorMessage());
+        try {
+            new Args("x##", new String[] { "-x", "Forty two" });
+            fail();
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.INVALID_DOUBLE, e.getErrorCode());
+            assertEquals('x', e.getErrorArgumentId());
+            assertEquals("Forty two", e.getErrorParameter());
+        }
     }
 
     @Test
     public void testMissingDouble() throws Exception {
-        Args args = new Args("x##", new String[] { "-x" });
-        assertFalse(args.isValid());
-        assertEquals(0, args.cardinality());
-        assertFalse(args.has('x'));
-        assertEquals(0.0, args.getDouble('x'), 0.01);
-        assertEquals("Could not find double parameter for -x.",
-                args.errorMessage());
+        try {
+            new Args("x##", new String[] { "-x" });
+            fail();
+        } catch (ArgsException e) {
+            assertEquals(ArgsException.ErrorCode.MISSING_DOUBLE, e.getErrorCode());
+            assertEquals('x', e.getErrorArgumentId());
+        }
     }
 }
