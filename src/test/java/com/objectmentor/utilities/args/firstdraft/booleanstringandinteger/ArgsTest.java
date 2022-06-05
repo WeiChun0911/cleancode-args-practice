@@ -7,6 +7,8 @@ import java.text.ParseException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ArgsTest {
 
@@ -216,4 +218,14 @@ public class ArgsTest {
             assertThat("Error message", errorMessage, is(equalTo("Bad character:2in com.objectmentor.utilities.args.seconddraft.com.objectmentor.utilities.args.seconddraft.Args format: g,d*,2")));
         }
     }
+
+    @Test
+    public void testSimpleDoublePresent() throws Exception {
+        Args args = new Args("x##", new String[] { "-x", "42.3" });
+        assertTrue(args.isValid());
+        assertEquals(1, args.cardinality());
+        assertTrue(args.has('x'));
+        assertEquals(42.3, args.getDouble('x'), .001);
+    }
+
 }
