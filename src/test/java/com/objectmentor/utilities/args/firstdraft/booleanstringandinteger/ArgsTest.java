@@ -239,4 +239,15 @@ public class ArgsTest {
         assertEquals("Argument -x expects a double but was 'Forty two'.",
                 args.errorMessage());
     }
+
+    @Test
+    public void testMissingDouble() throws Exception {
+        Args args = new Args("x##", new String[] { "-x" });
+        assertFalse(args.isValid());
+        assertEquals(0, args.cardinality());
+        assertFalse(args.has('x'));
+        assertEquals(0.0, args.getDouble('x'), 0.01);
+        assertEquals("Could not find double parameter for -x.",
+                args.errorMessage());
+    }
 }
