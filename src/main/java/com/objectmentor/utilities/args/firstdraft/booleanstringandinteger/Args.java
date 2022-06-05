@@ -112,9 +112,9 @@ public class Args {
         if (m == null)
             return false;
         try {
-            if (m instanceof IntegerArgumentMarshaler)
+            if (m instanceof BooleanArgumentMarshaler)
                 setBooleanArg(m, currentArgument);
-            else if (m instanceof BooleanArgumentMarshaler)
+            else if (m instanceof StringArgumentMarshaler)
                 setStringArg(m);
             else if (m instanceof IntegerArgumentMarshaler)
                 setIntArg(m);
