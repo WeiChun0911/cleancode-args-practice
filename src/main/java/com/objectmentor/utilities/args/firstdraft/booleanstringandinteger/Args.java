@@ -112,19 +112,13 @@ public class Args {
         if (m == null)
             return false;
         try {
-            if (m instanceof BooleanArgumentMarshaler)
-                m.set("true");
-            else if (m instanceof StringArgumentMarshaler)
-                m.set(currentArgument);
-            else if (m instanceof IntegerArgumentMarshaler)
-                m.set(currentArgument);
+            m.set(currentArgument);
+            return true;
         } catch (ArgsException e) {
             valid = false;
             errorArgumentId = argChar;
             throw e;
         }
-
-        return true;
     }
 
     public int cardinality() {
