@@ -50,33 +50,22 @@ public class Args {
         char elementId = element.charAt(0);
         String elementTail = element.substring(1);
         validateSchemaElementId(elementId);
-        if (isBooleanSchemaElement(elementTail))
+        if (elementTail.length() == 0)
             marshalers.put(elementId, new BooleanArgumentMarshaler());
-        else if (isStringSchemaElement(elementTail))
+        else if (elementTail.equals("*"))
             marshalers.put(elementId, new StringArgumentMarshaler());
-        else if (isIntegerSchemaElement(elementTail)) {
+        else if (elementTail.equals("#"))
             marshalers.put(elementId, new IntegerArgumentMarshaler());
-        } else {
+        else if (elementTail.equals("##"))
+            marshalers.put(elementId, new DoubleArgumentMarshaler());
+        else
             throw new ParseException(String.format("Argument: %c has invalid format: %s.", elementId, elementTail), 0);
-        }
     }
 
     private void validateSchemaElementId(char elementId) throws ParseException {
         if (!Character.isLetter(elementId)) {
             throw new ParseException("Bad character:" + elementId + "in com.objectmentor.utilities.args.seconddraft.com.objectmentor.utilities.args.seconddraft.Args format: " + schema, 0);
         }
-    }
-
-    private boolean isStringSchemaElement(String elementTail) {
-        return elementTail.equals("*");
-    }
-
-    private boolean isBooleanSchemaElement(String elementTail) {
-        return elementTail.length() == 0;
-    }
-
-    private boolean isIntegerSchemaElement(String elementTail) {
-        return elementTail.equals("#");
     }
 
     private boolean parseArguments() throws ArgsException {
